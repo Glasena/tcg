@@ -9,3 +9,11 @@ CREATE DATABASE tcg OWNER tcg_user;
 ## Run Migrations
 
 php artisan migrate
+
+## Criar Models
+
+php artisan make:model TcgType
+
+## Criar Controller
+
+php artisan make:controller TcgTypeController --resource
