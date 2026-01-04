@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\TcgTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,4 +13,5 @@ Route::get('/health', function () {
     return response()->json(['status' => 'ok']);
 });
 
-Route::get('/tcg-type', [TcgTypeController::class, 'index']);
+Route::get('/tcg-types', [TcgTypeController::class, 'index']);
+Route::post('/cards', [CardController::class, 'store']);
