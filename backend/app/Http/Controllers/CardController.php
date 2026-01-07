@@ -17,9 +17,7 @@ class CardController extends Controller
     {
 
         $card = $action->execute(
-            $request->tcg_type_id,
-            $request->tcg_custom_id,
-            $request->name
+            $request
         );
 
         return new CardResource($card);

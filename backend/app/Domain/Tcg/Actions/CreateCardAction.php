@@ -9,14 +9,12 @@ use RuntimeException;
 class CreateCardAction
 {
     public function execute(
-        int $tcgTypeId,
-        string $tcgCustomId,
-        string $name
+        $request
     ): Card {
-        return DB::transaction(function () use ($tcgTypeId, $tcgCustomId, $name) {
+        return DB::transaction(function () use ($request) {
 
-            $exists = Card::where('tcg_custom_id', $tcgCustomId)
-                ->where('tcg_type_id', $tcgTypeId)
+            $exists = Card::where('tcg_custom_id', $request->tcg_custom_id)
+                ->where('tcg_type_id', $request->tcg_type_id)
                 ->exists();
 
             if ($exists) {
@@ -24,9 +22,9 @@ class CreateCardAction
             }
 
             return Card::create([
-                'name' => $name,
-                'tcg_custom_id' => $tcgCustomId,
-                'tcg_type_id' => $tcgTypeId,
+                'name' => $request->name,
+                'tcg_custom_id' => $request->tcg_custom_id,
+                'tcg_type_id' => $request->tcg_type_id,
             ]);
         });
     }
