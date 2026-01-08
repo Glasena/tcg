@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Tcg\Actions\CreateCardAction;
+use App\Domain\Tcg\Actions\DestroyCardAction;
 use App\Domain\Tcg\Actions\ListCardAction;
 use App\Domain\Tcg\Actions\UpdateCardAction;
 use App\Domain\Tcg\DTOs\CreateCardData;
@@ -39,6 +40,12 @@ class CardController extends Controller
     {
         $data = UpdateCardData::fromRequest($request, $card->id);
         return new CardResource($action->execute($data));
+    }
+
+    public function destroy(Card $card, DestroyCardAction $action)
+    {
+        $action->execute($card);
+        return response()->noContent();
     }
 
 }
