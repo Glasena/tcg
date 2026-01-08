@@ -16,3 +16,4 @@ Route::get('/health', function () {
 Route::get('/tcg-types', [TcgTypeController::class, 'index']);
 Route::post('/cards', [CardController::class, 'store']);
 Route::get('/cards', [CardController::class, 'show']);
+Route::patch('/cards/{card}', [CardController::class, 'update']);
