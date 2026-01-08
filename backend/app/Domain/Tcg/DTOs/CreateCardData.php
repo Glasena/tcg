@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Tcg\Data;
+namespace App\Domain\Tcg\DTOs;
 
 use App\Http\Requests\CreateCardRequest;
 
-readonly class CardData
+readonly class CreateCardData
 {
     public function __construct(
         public int $tcg_type_id,

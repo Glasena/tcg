@@ -2,14 +2,14 @@
 
 namespace App\Domain\Tcg\Actions;
 
-use App\Domain\Tcg\Data\CardData;
+use App\Domain\Tcg\DTOs\CreateCardData;
 use App\Domain\Tcg\Models\Card;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class CreateCardAction
 {
-    public function execute(CardData $data): Card
+    public function execute(CreateCardData $data): Card
     {
         return DB::transaction(function () use ($data) {
 
