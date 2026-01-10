@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 onMounted(() => {
   document.documentElement.classList.add('dark')
@@ -11,6 +12,7 @@ onMounted(() => {
   <div>
     <AppHeader />
     <RouterView />
+    <ConfirmDialog />
   </div>
 </template>
 

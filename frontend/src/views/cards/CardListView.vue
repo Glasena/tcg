@@ -5,9 +5,11 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import { useTcgTypesStore } from '@/stores/tcgTypes'
+import { useConfirm } from 'primevue/useconfirm'
 
 const router = useRouter()
 const tcgTypesStore = useTcgTypesStore()
+const confirm = useConfirm()
 
 const cards = ref([])
 const loading = ref(true)
@@ -17,7 +19,6 @@ const fetchCards = async () => {
   try {
     const response = await fetch('http://localhost:8000/api/cards')
     const data = await response.json()
-
     cards.value = data.data
   } catch (error) {
     console.error('Error fetching cards:', error)
@@ -29,6 +30,28 @@ const fetchCards = async () => {
 const getTypeName = (typeId: number) => {
   const type = tcgTypesStore.types.find((t) => t.id === typeId)
   return type?.description || typeId
+}
+
+const deleteCard = async (id: number) => {
+  confirm.require({
+    message: 'Are you sure you want to delete this card?',
+    header: 'Delete Confirmation',
+    icon: 'pi pi-exclamation-triangle',
+    rejectLabel: 'Cancel',
+    acceptLabel: 'Delete',
+    rejectClass: 'p-button-secondary p-button-outlined',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await fetch(`http://localhost:8000/api/cards/${id}`, {
+          method: 'DELETE',
+        })
+        fetchCards()
+      } catch (error) {
+        console.error('Error deleting card:', error)
+      }
+    },
+  })
 }
 
 onMounted(() => {
@@ -61,6 +84,12 @@ onMounted(() => {
               severity="info"
               size="small"
               @click="router.push(`/cards/${slotProps.data.id}/edit`)"
+            />
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+              @click="deleteCard(slotProps.data.id)"
             /></div></template></Column
     ></DataTable>
   </div>

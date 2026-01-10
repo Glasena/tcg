@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import GoldDark from './presets/gold-dark'
+import ConfirmationService from 'primevue/confirmationservice'
 
 import './assets/main.css'
 import 'primeicons/primeicons.css'
@@ -21,5 +22,6 @@ app.use(PrimeVue, {
     },
   },
 })
+app.use(ConfirmationService)
 
 app.mount('#app')
