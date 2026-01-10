@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import GoldDark from './presets/gold-dark'
 
+import './assets/main.css'
 import 'primeicons/primeicons.css'
 
 import App from './App.vue'
