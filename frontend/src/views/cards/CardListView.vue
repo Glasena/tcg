@@ -4,8 +4,10 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
+import { useTcgTypesStore } from '@/stores/tcgTypes'
 
 const router = useRouter()
+const tcgTypesStore = useTcgTypesStore()
 
 const cards = ref([])
 const loading = ref(true)
@@ -24,7 +26,13 @@ const fetchCards = async () => {
   }
 }
 
+const getTypeName = (typeId: number) => {
+  const type = tcgTypesStore.types.find((t) => t.id === typeId)
+  return type?.description || typeId
+}
+
 onMounted(() => {
+  tcgTypesStore.fetchTypes()
   fetchCards()
 })
 </script>
@@ -39,7 +47,11 @@ onMounted(() => {
     <DataTable :value="cards" :loading="loading" paginator :rows="10" stripedRows>
       <Column field="name" header="Name" sortable></Column>
       <Column field="tcg_custom_id" header="ID" sortable></Column>
-      <Column field="tcg_type_id" header="Type" sortable></Column>
+      <Column field="tcg_type_id" header="Type" sortable>
+        <template #body="slotProps">
+          {{ getTypeName(slotProps.data.tcg_type_id) }}
+        </template>
+      </Column>
 
       <Column header="Actions">
         <template #body="slotProps">

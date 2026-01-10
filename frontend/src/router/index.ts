@@ -21,6 +21,11 @@ const router = createRouter({
       name: 'cards.create',
       component: CardFormView,
     },
+    {
+      path: '/cards/:id/edit',
+      name: 'cards.edit',
+      component: CardFormView,
+    },
   ],
 })
 
