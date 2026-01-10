@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 import { useTcgTypesStore } from '@/stores/tcgTypes'
 import { useConfirm } from 'primevue/useconfirm'
+import { API_URL } from '@/config/api'
+
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
 
 const router = useRouter()
 const tcgTypesStore = useTcgTypesStore()
@@ -17,7 +19,7 @@ const loading = ref(true)
 const fetchCards = async () => {
   loading.value = true
   try {
-    const response = await fetch('http://localhost:8000/api/cards')
+    const response = await fetch(`${API_URL}/cards`)
     const data = await response.json()
     cards.value = data.data
   } catch (error) {
@@ -43,7 +45,7 @@ const deleteCard = async (id: number) => {
     acceptClass: 'p-button-danger',
     accept: async () => {
       try {
-        await fetch(`http://localhost:8000/api/cards/${id}`, {
+        await fetch(`${API_URL}/cards/${id}`, {
           method: 'DELETE',
         })
         fetchCards()

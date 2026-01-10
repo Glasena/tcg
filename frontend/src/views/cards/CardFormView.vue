@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTcgTypesStore } from '@/stores/tcgTypes'
+import { API_URL } from '@/config/api'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
@@ -26,7 +27,7 @@ const fetchCard = async () => {
 
   loading.value = true
   try {
-    const response = await fetch(`http://localhost:8000/api/cards/${cardId}`)
+    const response = await fetch(`${API_URL}/cards/${cardId}`)
     const data = await response.json()
     form.value = data.data
   } catch (error) {
@@ -40,9 +41,7 @@ const submitForm = async () => {
   loading.value = true
 
   try {
-    const url = isEditing.value
-      ? `http://localhost:8000/api/cards/${cardId}`
-      : 'http://localhost:8000/api/cards'
+    const url = isEditing.value ? `${API_URL}/cards/${cardId}` : `${API_URL}/cards`
 
     const method = isEditing.value ? 'PATCH' : 'POST'
 
