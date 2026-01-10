@@ -8,8 +8,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppHeader />
+  <div>
+    <AppHeader />
+    <RouterView />
+  </div>
 </template>
+
 <style>
 * {
   font-family: 'Montserrat', sans-serif;
