@@ -61,7 +61,15 @@ const handleLogout = () => {
       <template #end>
         <div class="flex items-center gap-2">
           <template v-if="authStore.isAuthenticated">
-            <span class="text-sm">{{ authStore.user?.name }}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm">{{ authStore.user?.name }}</span>
+              <span
+                v-if="authStore.isAdmin"
+                class="text-xs px-2 py-1 border border-amber-500 text-amber-500 rounded"
+              >
+                Administrator
+              </span>
+            </div>
             <Button
               label="Logout"
               icon="pi pi-sign-out"
