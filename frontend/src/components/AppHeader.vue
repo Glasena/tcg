@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Menubar from 'primevue/menubar'
@@ -8,29 +8,37 @@ import Button from 'primevue/button'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const items = ref([
-  {
-    label: 'Home',
-    icon: 'pi pi-home',
-    command: () => router.push('/'),
-  },
-  {
-    label: 'Cards',
-    icon: 'pi pi-id-card',
-    items: [
-      {
-        label: 'List Cards',
-        icon: 'pi pi-list',
-        command: () => router.push('/cards'),
-      },
-      {
-        label: 'Create Card',
-        icon: 'pi pi-plus',
-        command: () => router.push('/cards/create'),
-      },
-    ],
-  },
-])
+const items = computed(() => {
+  const menuItems = [
+    {
+      label: 'Home',
+      icon: 'pi pi-home',
+      command: () => router.push('/'),
+    },
+    {
+      label: 'Cards',
+      icon: 'pi pi-id-card',
+      items: [
+        {
+          label: 'List Cards',
+          icon: 'pi pi-list',
+          command: () => router.push('/cards'),
+        },
+        // Só mostra Create se estiver autenticado
+        ...(authStore.isAuthenticated
+          ? [
+              {
+                label: 'Create Card',
+                icon: 'pi pi-plus',
+                command: () => router.push('/cards/create'),
+              },
+            ]
+          : []),
+      ],
+    },
+  ]
+  return menuItems
+})
 
 const handleLogout = () => {
   authStore.logout()

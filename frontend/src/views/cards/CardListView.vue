@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useTcgTypesStore } from '@/stores/tcgTypes'
 import { useConfirm } from 'primevue/useconfirm'
 import { API_URL } from '@/config/api'
+import { useAuthStore } from '@/stores/auth'
 
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -56,6 +57,8 @@ const deleteCard = async (id: number) => {
   })
 }
 
+const authStore = useAuthStore()
+
 onMounted(() => {
   tcgTypesStore.fetchTypes()
   fetchCards()
@@ -66,7 +69,12 @@ onMounted(() => {
   <div class="p-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Cards</h1>
-      <Button label="New Card" icon="pi pi-plus" @click="router.push('/cards/create')" />
+      <Button
+        label="New Card"
+        icon="pi pi-plus"
+        @click="router.push('/cards/create')"
+        v-if="authStore.isAuthenticated"
+      />
     </div>
 
     <DataTable :value="cards" :loading="loading" paginator :rows="10" stripedRows>
@@ -78,7 +86,7 @@ onMounted(() => {
         </template>
       </Column>
 
-      <Column header="Actions">
+      <Column header="Actions" v-if="authStore.isAuthenticated">
         <template #body="slotProps">
           <div class="flex gap-2">
             <Button
