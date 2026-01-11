@@ -13,6 +13,8 @@ class ListCardRequest extends FormRequest
             'name' => ['nullable', 'string'],
             'tcg_custom_id' => ['nullable', 'string'],
             'id' => ['nullable', 'integer'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

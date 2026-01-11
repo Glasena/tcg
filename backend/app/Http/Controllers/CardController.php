@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Tcg\Actions\CreateCardAction;
 use App\Domain\Tcg\Actions\DestroyCardAction;
 use App\Domain\Tcg\Actions\ListCardAction;
+use App\Domain\Tcg\Actions\ShowCardAction;
 use App\Domain\Tcg\Actions\UpdateCardAction;
 use App\Domain\Tcg\DTOs\CreateCardData;
 use App\Domain\Tcg\DTOs\UpdateCardData;
@@ -27,13 +28,14 @@ class CardController extends Controller
         return new CardResource($action->execute($cardData));
     }
 
-    public function show(ListCardRequest $request, ListCardAction $action)
+    public function index(ListCardRequest $request, ListCardAction $action)
     {
-        $cards = $action->execute(
-            $request
-        );
+        return CardResource::collection($action->execute($request));
+    }
 
-        return new CardResource($cards);
+    public function show(Card $card, ShowCardAction $action)
+    {
+        return new CardResource($action->execute($card));
     }
 
     public function update(UpdateCardRequest $request, Card $card, UpdateCardAction $action)
