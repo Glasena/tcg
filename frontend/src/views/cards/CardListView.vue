@@ -17,6 +17,11 @@ const confirm = useConfirm()
 const cards = ref([])
 const loading = ref(true)
 
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${authStore.token}`,
+})
+
 const fetchCards = async () => {
   loading.value = true
   try {
@@ -48,6 +53,7 @@ const deleteCard = async (id: number) => {
       try {
         await fetch(`${API_URL}/cards/${id}`, {
           method: 'DELETE',
+          headers: getAuthHeaders(),
         })
         fetchCards()
       } catch (error) {

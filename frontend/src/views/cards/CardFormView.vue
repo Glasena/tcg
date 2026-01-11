@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTcgTypesStore } from '@/stores/tcgTypes'
+import { useAuthStore } from '@/stores/auth'
 import { API_URL } from '@/config/api'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
@@ -10,8 +11,9 @@ import Button from 'primevue/button'
 const router = useRouter()
 const route = useRoute()
 const tcgTypesStore = useTcgTypesStore()
+const authStore = useAuthStore()
 
-const cardId = route.params.id // null se for create, id se for edit
+const cardId = route.params.id
 const isEditing = ref(!!cardId)
 
 const form = ref({
@@ -22,12 +24,19 @@ const form = ref({
 
 const loading = ref(false)
 
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${authStore.token}`,
+})
+
 const fetchCard = async () => {
   if (!cardId) return
 
   loading.value = true
   try {
-    const response = await fetch(`${API_URL}/cards/${cardId}`)
+    const response = await fetch(`${API_URL}/cards/${cardId}`, {
+      headers: getAuthHeaders(),
+    })
     const data = await response.json()
     form.value = data.data
   } catch (error) {
@@ -42,14 +51,11 @@ const submitForm = async () => {
 
   try {
     const url = isEditing.value ? `${API_URL}/cards/${cardId}` : `${API_URL}/cards`
-
     const method = isEditing.value ? 'PATCH' : 'POST'
 
     const response = await fetch(url, {
       method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(form.value),
     })
 
