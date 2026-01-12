@@ -6,15 +6,23 @@ import { useConfirm } from 'primevue/useconfirm'
 import { API_URL } from '@/config/api'
 import { useAuthStore } from '@/stores/auth'
 
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 
 const router = useRouter()
 const tcgTypesStore = useTcgTypesStore()
 const confirm = useConfirm()
+const authStore = useAuthStore()
 
-const cards = ref([])
+interface Card {
+  id: number
+  name: string
+  tcg_custom_id: string
+  tcg_type_id: number
+  image_url: string | null
+}
+
+const cards = ref<Card[]>([])
 const loading = ref(true)
 
 const getAuthHeaders = () => ({
@@ -63,7 +71,12 @@ const deleteCard = async (id: number) => {
   })
 }
 
-const authStore = useAuthStore()
+const getCardImage = (card: Card) => {
+  if (card.image_url) {
+    return `http://localhost:8000${card.image_url}`
+  }
+  return '/yugioh_back.jpeg'
+}
 
 onMounted(() => {
   tcgTypesStore.fetchTypes()
@@ -83,30 +96,45 @@ onMounted(() => {
       />
     </div>
 
-    <DataTable :value="cards" :loading="loading" paginator :rows="10" stripedRows>
-      <Column field="name" header="Name" sortable></Column>
-      <Column field="tcg_custom_id" header="ID" sortable></Column>
-      <Column field="tcg_type_id" header="Type" sortable>
-        <template #body="slotProps">
-          {{ getTypeName(slotProps.data.tcg_type_id) }}
-        </template>
-      </Column>
+    <div v-if="loading" class="text-center py-8">Loading cards...</div>
 
-      <Column header="Actions" v-if="authStore.isAuthenticated">
-        <template #body="slotProps">
-          <div class="flex gap-2">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      <Card v-for="card in cards" :key="card.id" class="overflow-hidden">
+        <template #header>
+          <div class="bg-gray-900 p-4 flex items-center justify-center h-80">
+            <img
+              :src="getCardImage(card)"
+              :alt="card.name"
+              class="max-h-full max-w-full object-contain"
+            />
+          </div>
+        </template>
+        <template #content>
+          <div class="text-center space-y-1">
+            <h3 class="font-semibold text-sm truncate">{{ card.name }}</h3>
+            <p class="text-xs text-gray-400">ID: {{ card.tcg_custom_id }}</p>
+            <p class="text-xs text-yellow-600">{{ getTypeName(card.tcg_type_id) }}</p>
+          </div>
+        </template>
+        <template #footer v-if="authStore.isAuthenticated">
+          <div class="flex gap-2 justify-center">
             <Button
               icon="pi pi-pencil"
               severity="info"
               size="small"
-              @click="router.push(`/cards/${slotProps.data.id}/edit`)"
+              text
+              @click="router.push(`/cards/${card.id}/edit`)"
             />
             <Button
               icon="pi pi-trash"
               severity="danger"
               size="small"
-              @click="deleteCard(slotProps.data.id)"
-            /></div></template></Column
-    ></DataTable>
+              text
+              @click="deleteCard(card.id)"
+            />
+          </div>
+        </template>
+      </Card>
+    </div>
   </div>
 </template>
