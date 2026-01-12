@@ -13,6 +13,7 @@ class UpdateCardRequest extends FormRequest
             'name' => ['nullable', 'string'],
             'tcg_custom_id' => ['nullable', 'string'],
             'id' => ['nullable', 'integer'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

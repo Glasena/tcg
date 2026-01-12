@@ -21,10 +21,16 @@ class CreateCardAction
                 throw new RuntimeException('Card already exists.');
             }
 
+            $imagePath = null;
+            if ($data->image) {
+                $imagePath = $data->image->store('cards', 'public'); // ← storage/app/public/cards
+            }
+
             return Card::create([
                 'name' => $data->name,
                 'tcg_custom_id' => $data->tcg_custom_id,
                 'tcg_type_id' => $data->tcg_type_id,
+                'img_url' => $imagePath,
             ]);
         });
     }

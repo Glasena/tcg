@@ -12,6 +12,7 @@ class CreateCardRequest extends FormRequest
             'tcg_type_id' => ['required', 'integer', 'exists:tcg_types,id'],
             'tcg_custom_id' => ['required', 'string', 'max:20'],
             'name' => ['required', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }
