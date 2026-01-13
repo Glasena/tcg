@@ -22,7 +22,7 @@ class ListCardAction
             ->when($request->id, function ($query, $value) {
                 return $query->where('id', $value);
             })
-            ->paginate($request->per_page ?? 15);
+            ->paginate($request->per_page ?? 18);
         ;
     }
 }
