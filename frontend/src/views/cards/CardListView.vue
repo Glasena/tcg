@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Paginator from 'primevue/paginator'
 
 const router = useRouter()
 const tcgTypesStore = useTcgTypesStore()
@@ -22,25 +23,49 @@ interface Card {
   image_url: string | null
 }
 
+interface PaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
 const cards = ref<Card[]>([])
 const loading = ref(true)
+const pagination = ref<PaginationMeta>({
+  current_page: 1,
+  last_page: 1,
+  per_page: 12,
+  total: 0,
+})
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   Authorization: `Bearer ${authStore.token}`,
 })
 
-const fetchCards = async () => {
+const fetchCards = async (page = 1) => {
   loading.value = true
   try {
-    const response = await fetch(`${API_URL}/cards`)
+    const response = await fetch(`${API_URL}/cards?page=${page}`)
     const data = await response.json()
     cards.value = data.data
+    pagination.value = {
+      current_page: data.meta.current_page,
+      last_page: data.meta.last_page,
+      per_page: data.meta.per_page,
+      total: data.meta.total,
+    }
   } catch (error) {
     console.error('Error fetching cards:', error)
   } finally {
     loading.value = false
   }
+}
+
+const onPageChange = (event: { page: number }) => {
+  fetchCards(event.page + 1) // PrimeVue usa index 0, Laravel usa 1
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const getTypeName = (typeId: number) => {
@@ -63,7 +88,7 @@ const deleteCard = async (id: number) => {
           method: 'DELETE',
           headers: getAuthHeaders(),
         })
-        fetchCards()
+        fetchCards(pagination.value.current_page)
       } catch (error) {
         console.error('Error deleting card:', error)
       }
@@ -98,43 +123,54 @@ onMounted(() => {
 
     <div v-if="loading" class="text-center py-8">Loading cards...</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      <Card v-for="card in cards" :key="card.id" class="overflow-hidden">
-        <template #header>
-          <div class="bg-gray-900 p-4 flex items-center justify-center h-80">
-            <img
-              :src="getCardImage(card)"
-              :alt="card.name"
-              class="max-h-full max-w-full object-contain"
-            />
-          </div>
-        </template>
-        <template #content>
-          <div class="text-center space-y-1">
-            <h3 class="font-semibold text-sm truncate">{{ card.name }}</h3>
-            <p class="text-xs text-gray-400">ID: {{ card.tcg_custom_id }}</p>
-            <p class="text-xs text-yellow-600">{{ getTypeName(card.tcg_type_id) }}</p>
-          </div>
-        </template>
-        <template #footer v-if="authStore.isAuthenticated">
-          <div class="flex gap-2 justify-center">
-            <Button
-              icon="pi pi-pencil"
-              severity="info"
-              size="small"
-              text
-              @click="router.push(`/cards/${card.id}/edit`)"
-            />
-            <Button
-              icon="pi pi-trash"
-              severity="danger"
-              size="small"
-              text
-              @click="deleteCard(card.id)"
-            />
-          </div>
-        </template>
-      </Card>
+    <div v-else>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        <Card v-for="card in cards" :key="card.id" class="overflow-hidden">
+          <template #header>
+            <div class="bg-gray-900 p-4 flex items-center justify-center h-80">
+              <img
+                :src="getCardImage(card)"
+                :alt="card.name"
+                class="max-h-full max-w-full object-contain"
+              />
+            </div>
+          </template>
+          <template #content>
+            <div class="text-center space-y-1">
+              <h3 class="font-semibold text-sm truncate">{{ card.name }}</h3>
+              <p class="text-xs text-gray-400">ID: {{ card.tcg_custom_id }}</p>
+              <p class="text-xs text-yellow-600">{{ getTypeName(card.tcg_type_id) }}</p>
+            </div>
+          </template>
+          <template #footer v-if="authStore.isAuthenticated">
+            <div class="flex gap-2 justify-center">
+              <Button
+                icon="pi pi-pencil"
+                severity="info"
+                size="small"
+                text
+                @click="router.push(`/cards/${card.id}/edit`)"
+              />
+              <Button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                text
+                @click="deleteCard(card.id)"
+              />
+            </div>
+          </template>
+        </Card>
+      </div>
+
+      <Paginator
+        v-if="pagination.total > pagination.per_page"
+        :rows="pagination.per_page"
+        :totalRecords="pagination.total"
+        :first="(pagination.current_page - 1) * pagination.per_page"
+        @page="onPageChange"
+        class="mt-6"
+      />
     </div>
   </div>
 </template>
