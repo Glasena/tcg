@@ -20,8 +20,12 @@ php artisan make:model TcgType
 
 php artisan make:controller TcgTypeController --resource
 
-# Seeder
+## Seeder
 
 php artisan make:seeder AdminSeeder
 
 php artisan db:seed --class=AdminSeeder
+
+## Model PHPDocs
+
+php artisan ide-helper:models -RW
