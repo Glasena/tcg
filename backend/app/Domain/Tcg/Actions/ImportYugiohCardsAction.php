@@ -14,7 +14,7 @@ class ImportYugiohCardsAction
         $totalImported = 0;
 
         do {
-            $onProgress("🔄 Buscando cards (offset: $offset)...");
+            $onProgress("🔄 Getting Cards (offset: $offset)...");
 
             $response = Http::timeout(30)->get('https://db.ygoprodeck.com/api/v7/cardinfo.php', [
                 'num' => $perPage,
@@ -22,7 +22,7 @@ class ImportYugiohCardsAction
             ]);
 
             if ($response->failed()) {
-                $onProgress("❌ Falha na API (status: {$response->status()})");
+                $onProgress("❌ API Error (status: {$response->status()})");
                 break;
             }
 
@@ -30,7 +30,7 @@ class ImportYugiohCardsAction
             $cards = $data['data'] ?? [];
             $meta = $data['meta'] ?? null;
 
-            $onProgress("✅ Recebidos " . count($cards) . " cards");
+            $onProgress("✅ Received " . count($cards) . " cards");
 
             foreach ($cards as $cardData) {
                 ImportSingleCardJob::dispatch($cardData);

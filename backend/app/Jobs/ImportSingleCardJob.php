@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Domain\Tcg\Actions\CreateOrUpdateCardAction;
+use App\Domain\Tcg\Actions\DownloadCardImageAction;
 use App\Domain\Tcg\Models\Card;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,24 +20,24 @@ class ImportSingleCardJob implements ShouldQueue
     {
     }
 
-    public function handle(): void
+    public function handle(CreateOrUpdateCardAction $createOrUpdateCardAction, DownloadCardImageAction $downloadCardImageAction): void
     {
         try {
             $imagePath = null;
 
             if (isset($this->cardData['card_images'][0]['image_url'])) {
-                $imagePath = $this->downloadImage(
+                $imagePath = $downloadCardImageAction->execute(
                     $this->cardData['card_images'][0]['image_url']
                 );
             }
 
-            Card::updateOrCreate(
-                ['tcg_custom_id' => $this->cardData['id']],
-                [
-                    'name' => $this->cardData['name'],
-                    'tcg_type_id' => 1,
-                    'img_url' => $imagePath,
-                ]
+            $createOrUpdateCardAction->execute(
+                new \App\Domain\Tcg\DTOs\CreateCardData(
+                    tcg_custom_id: $this->cardData['id'],
+                    name: $this->cardData['name'],
+                    tcg_type_id: Card::TYPE_YUGIOH,
+                    image: $imagePath,
+                )
             );
 
         } catch (\Exception $e) {
@@ -43,25 +45,6 @@ class ImportSingleCardJob implements ShouldQueue
                 'card' => $this->cardData['name'] ?? 'Unknown',
                 'error' => $e->getMessage(),
             ]);
-        }
-    }
-
-    private function downloadImage(string $url): ?string
-    {
-        try {
-            $contents = @file_get_contents($url); // @ suprime warning
-
-            if ($contents === false) {
-                return null;
-            }
-
-            $filename = 'cards/' . basename($url);
-            Storage::disk('public')->put($filename, $contents);
-
-            return $filename;
-
-        } catch (\Exception $e) {
-            return null;
         }
     }
 }

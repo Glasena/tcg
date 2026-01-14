@@ -26,5 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Card extends Model
 {
+
+    const TYPE_YUGIOH = 1;
+
     protected $fillable = ['name', 'tcg_custom_id', 'tcg_type_id', 'img_url'];
 }
