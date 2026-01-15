@@ -12,6 +12,9 @@ class CreateTcgSetTypeRequest extends FormRequest
             'tcg_type_id' => ['required', 'integer', 'exists:tcg_types,id'],
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'date' => ['nullable', 'date'],
+            'num_of_cards' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

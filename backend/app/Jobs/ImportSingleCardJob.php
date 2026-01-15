@@ -3,14 +3,13 @@
 namespace App\Jobs;
 
 use App\Domain\Tcg\Actions\CreateOrUpdateCardAction;
-use App\Domain\Tcg\Actions\DownloadCardImageAction;
+use App\Domain\Tcg\Actions\DownloadImageAction;
 use App\Domain\Tcg\Models\Card;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
 
 class ImportSingleCardJob implements ShouldQueue
 {
@@ -20,14 +19,17 @@ class ImportSingleCardJob implements ShouldQueue
     {
     }
 
-    public function handle(CreateOrUpdateCardAction $createOrUpdateCardAction, DownloadCardImageAction $downloadCardImageAction): void
-    {
+    public function handle(
+        CreateOrUpdateCardAction $createOrUpdateCardAction,
+        DownloadImageAction $downloadImageAction
+    ): void {
         try {
             $imagePath = null;
 
             if (isset($this->cardData['card_images'][0]['image_url'])) {
-                $imagePath = $downloadCardImageAction->execute(
-                    $this->cardData['card_images'][0]['image_url']
+                $imagePath = $downloadImageAction->execute(
+                    $this->cardData['card_images'][0]['image_url'],
+                    'cards'
                 );
             }
 

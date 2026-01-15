@@ -29,7 +29,4 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/cards', [CardController::class, 'store']);
     Route::patch('/cards/{card}', [CardController::class, 'update']);
     Route::delete('/cards/{card}', [CardController::class, 'destroy']);
-
-    Route::post('/tcg-set-types', [TcgSetTypeController::class, 'store']);
-
 });

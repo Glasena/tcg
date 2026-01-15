@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TcgSetType extends Model
 {
-    protected $fillable = ['tcg_type_id', 'name', 'code'];
+    protected $fillable = ['tcg_type_id', 'name', 'code', 'img_url', 'num_of_cards', 'date'];
 
     public function tcgType()
     {

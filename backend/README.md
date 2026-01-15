@@ -29,3 +29,17 @@ php artisan db:seed --class=AdminSeeder
 ## Model PHPDocs
 
 php artisan ide-helper:models -RW
+
+## Commands
+
+### Importar Cards
+
+php artisan cards:import-yugioh
+
+### Executar Jobs
+
+php artisan queue:work
+
+### Colocar de volta na queue
+
+php artisan queue:retry all

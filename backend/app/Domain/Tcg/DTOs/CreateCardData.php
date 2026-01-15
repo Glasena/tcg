@@ -11,7 +11,7 @@ readonly class CreateCardData
         public int $tcg_type_id,
         public string $tcg_custom_id,
         public string $name,
-        public ?UploadedFile $image = null,
+        public string|UploadedFile|null $image = null,
     ) {
     }
 

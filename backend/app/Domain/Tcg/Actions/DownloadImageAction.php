@@ -4,9 +4,9 @@ namespace App\Domain\Tcg\Actions;
 
 use Illuminate\Support\Facades\Storage;
 
-class DownloadCardImageAction
+class DownloadImageAction
 {
-    public function execute(string $url): string|null
+    public function execute(string $url, $folder): string|null
     {
         try {
             $contents = @file_get_contents($url); // @ suprime warning
@@ -15,7 +15,7 @@ class DownloadCardImageAction
                 return null;
             }
 
-            $filename = 'cards/' . basename($url);
+            $filename = $folder . '/' . basename($url);
             Storage::disk('public')->put($filename, $contents);
 
             return $filename;
