@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Domain\Tcg\Actions\CreateOrUpdateSetAction;
+use App\Domain\Tcg\Actions\CreateSetAction;
 use App\Domain\Tcg\Actions\DownloadImageAction;
 use App\Domain\Tcg\Models\Card;
 use Carbon\Carbon;
@@ -21,7 +21,7 @@ class ImportSingleSetJob implements ShouldQueue
     }
 
     public function handle(
-        CreateOrUpdateSetAction $createOrUpdateSetAction,
+        CreateSetAction $createSetAction,
         DownloadImageAction $downloadCardImageAction
     ): void {
         try {
@@ -34,13 +34,17 @@ class ImportSingleSetJob implements ShouldQueue
                 );
             }
 
-            $createOrUpdateSetAction->execute(
+            $date = !empty($this->setData['tcg_date'])
+                ? Carbon::createFromFormat('Y-m-d', $this->setData['tcg_date'])
+                : null;
+
+            $createSetAction->execute(
                 new \App\Domain\Tcg\DTOs\CreateTcgSetTypeData(
                     tcg_type_id: Card::TYPE_YUGIOH,
                     name: $this->setData['set_name'],
                     code: $this->setData['set_code'],
                     num_of_cards: $this->setData['num_of_cards'],
-                    date: Carbon::createFromFormat('Y-m-d', $this->setData['tcg_date']),
+                    date: $date,
                     image: $imagePath,
                 )
             );
