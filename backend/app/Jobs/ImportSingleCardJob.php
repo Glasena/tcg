@@ -3,7 +3,10 @@
 namespace App\Jobs;
 
 use App\Domain\Tcg\Actions\CreateOrUpdateCardAction;
+use App\Domain\Tcg\Actions\CreateOrUpdateCardTcgSetTypeAction;
 use App\Domain\Tcg\Actions\DownloadImageAction;
+use App\Domain\Tcg\Actions\ListTcgSetTypeAction;
+use App\Domain\Tcg\DTOs\CreateCardTcgSetTypeData;
 use App\Domain\Tcg\Models\Card;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,7 +24,9 @@ class ImportSingleCardJob implements ShouldQueue
 
     public function handle(
         CreateOrUpdateCardAction $createOrUpdateCardAction,
-        DownloadImageAction $downloadImageAction
+        DownloadImageAction $downloadImageAction,
+        ListTcgSetTypeAction $listTcgSetTypeAction,
+        CreateOrUpdateCardTcgSetTypeAction $createOrUpdateCardTcgSetTypeAction,
     ): void {
         try {
             $imagePath = null;
@@ -33,7 +38,7 @@ class ImportSingleCardJob implements ShouldQueue
                 );
             }
 
-            $createOrUpdateCardAction->execute(
+            $card = $createOrUpdateCardAction->execute(
                 new \App\Domain\Tcg\DTOs\CreateCardData(
                     tcg_custom_id: $this->cardData['id'],
                     name: $this->cardData['name'],
@@ -41,6 +46,34 @@ class ImportSingleCardJob implements ShouldQueue
                     image: $imagePath,
                 )
             );
+
+            $cardSets = !empty($this->cardData['card_sets']) ? $this->cardData['card_sets'] : [];
+
+            foreach ($cardSets as $set) {
+
+                $setCode = explode('-', $set['set_code'])[0];
+
+                $tcgSetType = $listTcgSetTypeAction->execute(
+                    $setCode,
+                    $set['set_name'],
+                    Card::TYPE_YUGIOH
+                )->first();
+
+                if (empty($tcgSetType)) {
+                    continue;
+                }
+
+                $createOrUpdateCardTcgSetTypeAction->execute(
+                    new CreateCardTcgSetTypeData(
+                        tcgSetTypeId: $tcgSetType->id,
+                        cardId: $card->id,
+                        code: $tcgSetType->code,
+                        rarityCode: $set['set_rarity_code'],
+                        image: null
+                    )
+                );
+
+            }
 
         } catch (\Exception $e) {
             \Log::error('Import failed', [

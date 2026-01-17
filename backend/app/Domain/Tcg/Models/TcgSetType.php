@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Domain\Tcg\Models;
-
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -30,6 +29,23 @@ class TcgSetType extends Model
     public function tcgType()
     {
         return $this->belongsTo(TcgType::class);
+    }
+
+    public function cardTcgSetTypes()
+    {
+        return $this->hasMany(CardTcgSetType::class, 'tcg_type_id');
+    }
+
+    public function cards()
+    {
+        return $this->hasManyThrough(
+            Card::class,
+            CardTcgSetType::class,
+            'tcg_type_id',  // FK em card_tcg_set_type
+            'id',          // PK em cards
+            'id',           // PK em tcg_set_types
+            'card_id' // FK em card_tcg_set_type
+        );
     }
 
 }
