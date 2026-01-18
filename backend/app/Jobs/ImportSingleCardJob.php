@@ -9,6 +9,7 @@ use App\Domain\Support\Actions\DownloadImageAction;
 use App\Domain\Tcg\Actions\ListTcgSetTypeAction;
 use App\Domain\Cards\DTOs\CreateCardTcgSetTypeData;
 use App\Domain\Cards\Models\Card;
+use App\Domain\Tcg\DTOs\ListTcgSetTypeData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -55,9 +56,11 @@ class ImportSingleCardJob implements ShouldQueue
                 $setCode = explode('-', $set['set_code'])[0];
 
                 $tcgSetType = $listTcgSetTypeAction->execute(
-                    $setCode,
-                    $set['set_name'],
-                    Card::TYPE_YUGIOH
+                    new ListTcgSetTypeData(
+                        code: $setCode,
+                        name: $set['set_name'],
+                        tcg_type_id: Card::TYPE_YUGIOH
+                    )
                 )->first();
 
                 if (empty($tcgSetType)) {
@@ -68,7 +71,7 @@ class ImportSingleCardJob implements ShouldQueue
                     new CreateCardTcgSetTypeData(
                         tcgSetTypeId: $tcgSetType->id,
                         cardId: $card->id,
-                        code: $tcgSetType->code,
+                        code: $set['set_code'],
                         rarityCode: $set['set_rarity_code'],
                         image: null
                     )

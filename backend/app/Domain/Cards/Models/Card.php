@@ -2,6 +2,7 @@
 
 namespace App\Domain\Cards\Models;
 
+use App\Domain\Tcg\Models\TcgSetType;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -43,10 +44,10 @@ class Card extends Model
         return $this->hasManyThrough(
             TcgSetType::class,
             CardTcgSetType::class,
-            'card_id',          // FK em card_tcg_set_type
-            'id',              // PK em tcg_set_types
-            'id',               // PK em cards
-            'tcg_type_id' // FK em card_tcg_set_type
+            'card_id',              // FK em card_tcg_set_type
+            'id',                  // PK em tcg_set_types
+            'id',                   // PK em cards
+            'tcg_set_type_id' // FK em card_tcg_set_type
         );
     }
 
