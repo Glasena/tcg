@@ -4,6 +4,7 @@ import CardListView from '@/views/cards/CardListView.vue'
 import CardFormView from '@/views/cards/CardFormView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
+import CardShowView from '@/views/cards/CardShowView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,11 @@ const router = createRouter({
       path: '/cards/:id/edit',
       name: 'cards.edit',
       component: CardFormView,
+    },
+    {
+      path: '/cards/:id',
+      name: 'CardShow',
+      component: CardShowView,
     },
   ],
 })

@@ -23,6 +23,7 @@ class CardResource extends JsonResource
             'image_url' => $this->img_url
                 ? Storage::url($this->img_url)
                 : null,
+            'card_sets' => CardTcgSetTypeResource::collection($this->whenLoaded('cardSets')),
         ];
     }
 }

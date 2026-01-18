@@ -226,20 +226,6 @@ onMounted(() => {
     <!-- FILTROS -->
     <div class="bg-gray-800 p-4 rounded-lg mb-6 space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <!-- Set - 4 colunas -->
-        <div class="md:col-span-4">
-          <label class="block text-sm mb-2">Set</label>
-          <AutoComplete
-            v-model="filters.tcg_set_type_id"
-            :suggestions="filteredSets"
-            @complete="searchSets"
-            optionLabel="name"
-            placeholder="Search set..."
-            class="w-full"
-            :pt="{ input: { class: 'w-full' } }"
-          />
-        </div>
-
         <!-- Card Name - 4 colunas -->
         <div class="md:col-span-4">
           <label class="block text-sm mb-2">Card Name</label>
@@ -249,6 +235,20 @@ onMounted(() => {
             @complete="searchCards"
             optionLabel="name"
             placeholder="Search card..."
+            class="w-full"
+            :pt="{ input: { class: 'w-full' } }"
+          />
+        </div>
+
+        <!-- Set - 4 colunas -->
+        <div class="md:col-span-4">
+          <label class="block text-sm mb-2">Set</label>
+          <AutoComplete
+            v-model="filters.tcg_set_type_id"
+            :suggestions="filteredSets"
+            @complete="searchSets"
+            optionLabel="name"
+            placeholder="Search set..."
             class="w-full"
             :pt="{ input: { class: 'w-full' } }"
           />
@@ -300,9 +300,10 @@ onMounted(() => {
               <p class="text-xs text-yellow-600">{{ getTypeName(card.tcg_type_id) }}</p>
             </div>
           </template>
-          <template #footer v-if="authStore.isAuthenticated">
+          <template #footer>
             <div class="flex gap-2 justify-center">
               <Button
+                v-if="authStore.isAuthenticated"
                 icon="pi pi-pencil"
                 severity="info"
                 size="small"
@@ -310,11 +311,19 @@ onMounted(() => {
                 @click="router.push(`/cards/${card.id}/edit`)"
               />
               <Button
+                v-if="authStore.isAuthenticated"
                 icon="pi pi-trash"
                 severity="danger"
                 size="small"
                 text
                 @click="deleteCard(card.id)"
+              />
+              <Button
+                icon="pi pi-eye"
+                severity="info"
+                size="small"
+                text
+                @click="() => router.push(`/cards/${card.id}`)"
               />
             </div>
           </template>

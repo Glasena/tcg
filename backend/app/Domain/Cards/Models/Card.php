@@ -33,7 +33,7 @@ class Card extends Model
     protected $fillable = ['name', 'tcg_custom_id', 'tcg_type_id', 'img_url'];
 
     // Relacionamento 1: Acessa a tabela intermediária COM os dados extras
-    public function cardTcgSetTypes()
+    public function cardSets()
     {
         return $this->hasMany(CardTcgSetType::class);
     }

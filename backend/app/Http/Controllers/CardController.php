@@ -35,6 +35,7 @@ class CardController extends Controller
 
     public function show(Card $card, ShowCardAction $action)
     {
+        $card->load('cardSets.tcgSetType');
         return new CardResource($action->execute($card));
     }
 
