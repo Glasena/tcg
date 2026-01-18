@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domain\Tcg\Actions;
+namespace App\Domain\Cards\Actions;
 
-use App\Domain\Tcg\DTOs\CreateCardData;
-use App\Domain\Tcg\Models\Card;
+use App\Domain\Cards\DTOs\CreateCardData;
+use App\Domain\Cards\Models\Card;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 

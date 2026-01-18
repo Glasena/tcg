@@ -2,12 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Domain\Tcg\Actions\CreateOrUpdateCardAction;
-use App\Domain\Tcg\Actions\CreateOrUpdateCardTcgSetTypeAction;
-use App\Domain\Tcg\Actions\DownloadImageAction;
+use App\Domain\Cards\Actions\CreateOrUpdateCardAction;
+use App\Domain\Cards\Actions\CreateOrUpdateCardTcgSetTypeAction;
+use App\Domain\Cards\DTOs\CreateCardData;
+use App\Domain\Support\Actions\DownloadImageAction;
 use App\Domain\Tcg\Actions\ListTcgSetTypeAction;
-use App\Domain\Tcg\DTOs\CreateCardTcgSetTypeData;
-use App\Domain\Tcg\Models\Card;
+use App\Domain\Cards\DTOs\CreateCardTcgSetTypeData;
+use App\Domain\Cards\Models\Card;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,7 +40,7 @@ class ImportSingleCardJob implements ShouldQueue
             }
 
             $card = $createOrUpdateCardAction->execute(
-                new \App\Domain\Tcg\DTOs\CreateCardData(
+                new CreateCardData(
                     tcg_custom_id: $this->cardData['id'],
                     name: $this->cardData['name'],
                     tcg_type_id: Card::TYPE_YUGIOH,

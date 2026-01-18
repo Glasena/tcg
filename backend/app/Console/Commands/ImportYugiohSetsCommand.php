@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Domain\Tcg\Actions\DeleteAllCardTcgSetTypesAction;
-use App\Domain\Tcg\Actions\ImportYugiohCardSetsAction;
+use App\Domain\Cards\Actions\DeleteAllCardTcgSetTypesAction;
+use App\Domain\Cards\Actions\ImportYugiohCardSetsAction;
 use Illuminate\Console\Command;
 
 class ImportYugiohSetsCommand extends Command

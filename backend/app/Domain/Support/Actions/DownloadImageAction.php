@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tcg\Actions;
+namespace App\Domain\Support\Actions;
 
 use Illuminate\Support\Facades\Storage;
 

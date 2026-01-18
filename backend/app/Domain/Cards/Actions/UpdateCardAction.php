@@ -2,8 +2,8 @@
 
 namespace App\Domain\Tcg\Actions;
 
-use App\Domain\Tcg\DTOs\UpdateCardData;
-use App\Domain\Tcg\Models\Card;
+use App\Domain\Cards\DTOs\UpdateCardData;
+use App\Domain\Cards\Models\Card;
 use Storage;
 
 class UpdateCardAction

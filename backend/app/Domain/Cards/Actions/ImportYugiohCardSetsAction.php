@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tcg\Actions;
+namespace App\Domain\Cards\Actions;
 
 use App\Jobs\ImportSingleSetJob;
 use Illuminate\Support\Facades\Http;

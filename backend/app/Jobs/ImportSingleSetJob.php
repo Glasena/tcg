@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Domain\Tcg\Actions\CreateSetAction;
-use App\Domain\Tcg\Actions\DownloadImageAction;
-use App\Domain\Tcg\Models\Card;
+use App\Domain\Support\Actions\DownloadImageAction;
+use App\Domain\Cards\Models\Card;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

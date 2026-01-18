@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Domain\Tcg\Models;
+use App\Domain\Cards\Models\Card;
+use App\Domain\Cards\Models\CardTcgSetType;
 use Illuminate\Database\Eloquent\Model;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Tcg\Actions;
+namespace App\Domain\Cards\Actions;
 
-use App\Domain\Tcg\Models\CardTcgSetType;
+use App\Domain\Cards\Models\CardTcgSetType;
 
 class DeleteAllCardTcgSetTypesAction
 {

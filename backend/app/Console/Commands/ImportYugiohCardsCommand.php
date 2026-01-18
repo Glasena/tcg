@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Domain\Tcg\Actions\ImportYugiohCardsAction;
+use App\Domain\Cards\Actions\ImportYugiohCardsAction;
 use Illuminate\Console\Command;
 
 class ImportYugiohCardsCommand extends Command

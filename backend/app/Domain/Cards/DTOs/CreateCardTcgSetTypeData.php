@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tcg\DTOs;
+namespace App\Domain\Cards\DTOs;
 
 use Illuminate\Http\UploadedFile;
 

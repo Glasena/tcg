@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tcg\DTOs;
+namespace App\Domain\Cards\DTOs;
 
 use App\Http\Requests\CreateCardRequest;
 use Illuminate\Http\UploadedFile;

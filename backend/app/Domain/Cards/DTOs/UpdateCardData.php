@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tcg\DTOs;
+namespace App\Domain\Cards\DTOs;
 
 use App\Http\Requests\UpdateCardRequest;
 use Illuminate\Http\UploadedFile;
