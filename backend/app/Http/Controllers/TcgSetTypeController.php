@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Tcg\Actions\CreateTcgSetTypeAction;
+use App\Domain\Tcg\Actions\ListTcgSetTypeAction;
+use App\Domain\Tcg\DTOs\ListTcgSetTypeData;
 use App\Domain\Tcg\DTOs\CreateTcgSetTypeData;
 use App\Http\Requests\CreateTcgSetTypeRequest;
+use App\Http\Requests\ListSetRequest;
 use App\Http\Resources\TcgSetTypeResource;
 
 class TcgSetTypeController extends Controller
@@ -19,11 +22,13 @@ class TcgSetTypeController extends Controller
         return new TcgSetTypeResource($action->execute($tcgSetTypeData));
     }
 
-    /*public function index(ListCardRequest $request, ListCardAction $action)
+    public function index(ListSetRequest $request, ListTcgSetTypeAction $action)
     {
-        return CardResource::collection($action->execute($request));
-    }
+        $data = ListTcgSetTypeData::from($request->validated());
 
+        return TcgSetTypeResource::collection($action->execute($data));
+    }
+    /*
     public function show(Card $card, ShowCardAction $action)
     {
         return new CardResource($action->execute($card));

@@ -13,6 +13,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/tcg-types', [TcgTypeController::class, 'index']);
 Route::get('/cards', [CardController::class, 'index']);
 Route::get('/cards/{card}', [CardController::class, 'show']);
+Route::get('/tcg-set-types', [TcgSetTypeController::class, 'index']);
 
 Route::get('/health', function () {
     return response()->json(['status' => 'ok']);
