@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Tcg\Actions\CreateCardAction;
-use App\Domain\Tcg\Actions\DestroyCardAction;
-use App\Domain\Tcg\Actions\ListCardAction;
-use App\Domain\Tcg\Actions\ShowCardAction;
-use App\Domain\Tcg\Actions\UpdateCardAction;
-use App\Domain\Tcg\DTOs\CreateCardData;
-use App\Domain\Tcg\DTOs\UpdateCardData;
-use App\Domain\Tcg\Models\Card;
+use App\Domain\Cards\Actions\CreateCardAction;
+use App\Domain\Cards\Actions\DestroyCardAction;
+use App\Domain\Cards\Actions\ListCardAction;
+use App\Domain\Cards\Actions\ShowCardAction;
+use App\Domain\Cards\Actions\UpdateCardAction;
+use App\Domain\Cards\DTOs\CreateCardData;
+use App\Domain\Cards\DTOs\UpdateCardData;
+use App\Domain\Cards\Models\Card;
 use App\Http\Requests\CreateCardRequest;
 use App\Http\Requests\ListCardRequest;
 use App\Http\Requests\UpdateCardRequest;
