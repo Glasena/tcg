@@ -9,6 +9,9 @@ import { useAuthStore } from '@/stores/auth'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Paginator from 'primevue/paginator'
+import Select from 'primevue/select'
+import AutoComplete from 'primevue/autocomplete'
+import InputText from 'primevue/inputtext'
 
 const router = useRouter()
 const tcgTypesStore = useTcgTypesStore()
@@ -30,6 +33,35 @@ interface PaginationMeta {
   total: number
 }
 
+interface TcgSetType {
+  id: number
+  name: string
+  code: string
+}
+
+interface AutoCompleteCompleteEvent {
+  query: string
+}
+
+interface Filters {
+  tcg_type_id: number | null
+  tcg_set_type_id: TcgSetType | null
+  name: string | Card
+  code: string
+}
+
+// Filtros
+const filters = ref<Filters>({
+  tcg_type_id: null,
+  tcg_set_type_id: null,
+  name: '',
+  code: '',
+})
+
+const sets = ref<TcgSetType[]>([])
+const filteredSets = ref<TcgSetType[]>([])
+const cardSuggestions = ref<Card[]>([])
+
 const cards = ref<Card[]>([])
 const loading = ref(true)
 const pagination = ref<PaginationMeta>({
@@ -44,10 +76,70 @@ const getAuthHeaders = () => ({
   Authorization: `Bearer ${authStore.token}`,
 })
 
+// Buscar Sets
+const fetchSets = async () => {
+  try {
+    const response = await fetch(`${API_URL}/tcg-set-types`)
+    const data = await response.json()
+    sets.value = data.data || data
+  } catch (error) {
+    console.error('Error fetching sets:', error)
+  }
+}
+
+// Autocomplete de Sets
+const searchSets = async (event: AutoCompleteCompleteEvent) => {
+  if (!event.query.trim().length) {
+    filteredSets.value = [...sets.value]
+    return
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/tcg-set-types?name=${event.query}`)
+    const data = await response.json()
+    filteredSets.value = data.data
+  } catch (error) {
+    console.error('Error searching sets:', error)
+  }
+}
+
+// Autocomplete de Cards (busca na API)
+const searchCards = async (event: AutoCompleteCompleteEvent) => {
+  if (!event.query.trim().length) {
+    cardSuggestions.value = []
+    return
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/cards?name=${event.query}&per_page=10`)
+    const data = await response.json()
+    cardSuggestions.value = data.data
+  } catch (error) {
+    console.error('Error searching cards:', error)
+  }
+}
+
 const fetchCards = async (page = 1) => {
   loading.value = true
   try {
-    const response = await fetch(`${API_URL}/cards?page=${page}`)
+    const params = new URLSearchParams({ page: page.toString() })
+
+    if (filters.value.tcg_type_id) {
+      params.append('tcg_type_id', filters.value.tcg_type_id.toString())
+    }
+    if (filters.value.tcg_set_type_id) {
+      params.append('tcg_set_type_id', filters.value.tcg_set_type_id.id.toString())
+    }
+    if (filters.value.name) {
+      const nameValue =
+        typeof filters.value.name === 'string' ? filters.value.name : filters.value.name.name
+      params.append('name', nameValue)
+    }
+    if (filters.value.code) {
+      params.append('code', filters.value.code)
+    }
+
+    const response = await fetch(`${API_URL}/cards?${params}`)
     const data = await response.json()
     cards.value = data.data
     pagination.value = {
@@ -64,7 +156,7 @@ const fetchCards = async (page = 1) => {
 }
 
 const onPageChange = (event: { page: number }) => {
-  fetchCards(event.page + 1) // PrimeVue usa index 0, Laravel usa 1
+  fetchCards(event.page + 1)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -103,8 +195,19 @@ const getCardImage = (card: Card) => {
   return '/yugioh_back.jpeg'
 }
 
+const clearFilters = () => {
+  filters.value = {
+    tcg_type_id: null,
+    tcg_set_type_id: null,
+    name: '',
+    code: '',
+  }
+  fetchCards()
+}
+
 onMounted(() => {
   tcgTypesStore.fetchTypes()
+  fetchSets()
   fetchCards()
 })
 </script>
@@ -119,6 +222,61 @@ onMounted(() => {
         @click="router.push('/cards/create')"
         v-if="authStore.isAuthenticated"
       />
+    </div>
+    <!-- FILTROS -->
+    <div class="bg-gray-800 p-4 rounded-lg mb-6 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Set - 4 colunas -->
+        <div class="md:col-span-4">
+          <label class="block text-sm mb-2">Set</label>
+          <AutoComplete
+            v-model="filters.tcg_set_type_id"
+            :suggestions="filteredSets"
+            @complete="searchSets"
+            optionLabel="name"
+            placeholder="Search set..."
+            class="w-full"
+            :pt="{ input: { class: 'w-full' } }"
+          />
+        </div>
+
+        <!-- Card Name - 4 colunas -->
+        <div class="md:col-span-4">
+          <label class="block text-sm mb-2">Card Name</label>
+          <AutoComplete
+            v-model="filters.name"
+            :suggestions="cardSuggestions"
+            @complete="searchCards"
+            optionLabel="name"
+            placeholder="Search card..."
+            class="w-full"
+            :pt="{ input: { class: 'w-full' } }"
+          />
+        </div>
+
+        <!-- Code - 2 colunas -->
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-2">Code</label>
+          <InputText v-model="filters.code" placeholder="LOB-005" class="w-full" />
+        </div>
+
+        <!-- TCG Type - 2 colunas -->
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-2">TCG Type</label>
+          <Select
+            v-model="filters.tcg_type_id"
+            :options="tcgTypesStore.types"
+            optionLabel="description"
+            optionValue="id"
+            placeholder="Select TCG"
+            class="w-full"
+          />
+        </div>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <Button label="Search" icon="pi pi-search" @click="fetchCards(1)" />
+        <Button label="Clear" icon="pi pi-times" severity="secondary" @click="clearFilters" />
+      </div>
     </div>
 
     <div v-if="loading" class="text-center py-8">Loading cards...</div>
@@ -174,3 +332,10 @@ onMounted(() => {
     </div>
   </div>
 </template>
+<style scoped>
+:deep(.p-autocomplete),
+:deep(.p-select),
+:deep(.p-inputtext) {
+  width: 100% !important;
+}
+</style>
